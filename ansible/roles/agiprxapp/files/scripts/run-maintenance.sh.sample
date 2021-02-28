@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# === Possibility 1, run by http request ===
+# 
+# a) inside AgiPrx create an API user
+# b) uncomment the following line and change username, password, servername, port to your settings
+# curl --silent --show-error --fail http://myapiuser:somePassword@localhost:8002/maintenance/start
+
+# === Possiblility 2, run by ssh command ===
+#
+# a) inside AgiPrx create a user with SSH-public key (no API user but a 'normal' user)
+# b) uncomment the following line and change username, keyfile, servername, port to your settings
+# ssh -p2223 -i /myuser/.ssh/id_rsa agiprx@localhost maintenance
+

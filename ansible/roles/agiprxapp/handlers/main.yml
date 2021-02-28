@@ -1,0 +1,4 @@
+- name: agiprx restart
+  systemd:
+    state: restarted
+    name: agiprx

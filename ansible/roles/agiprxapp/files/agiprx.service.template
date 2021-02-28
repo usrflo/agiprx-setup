@@ -1,0 +1,35 @@
+#
+# Systemd unit file for AgiPrx
+#
+
+[Unit]
+Description=AgiPrx HAProxy and SSH proxy config daemon
+Documentation=https://github.com/usrflo/agiprx-setup
+After=network.target
+RequiresMountsFor={{serverdir}} /etc/haproxy /home
+
+[Service]
+# Configuration
+Environment="JAVA_OPTS=-Djava.awt.headless=true -Dagiprx.root={{serverdir}}"
+ExecStart={{serverdir}}/agiprxjre/bin/java $JAVA_OPTS {{jdkdebugoptions}} -jar {{serverdir}}/deployment/{{agiprx_jar}}
+SuccessExitStatus=143
+User=root
+Type=simple
+Restart=on-abort
+SyslogIdentifier=agiprx
+
+# Security
+User=root
+Group=root
+# PrivateTmp=yes
+# AmbientCapabilities=CAP_NET_BIND_SERVICE
+# NoNewPrivileges=true
+# CacheDirectory=agiprx
+# CacheDirectoryMode=750
+# ProtectSystem=strict
+# ReadWritePaths=/var/log
+# useradd passwd
+# ReadWritePaths=/etc/haproxy
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,242 @@
+- name: 'Include secured vars'
+  include_vars:
+    file: ../../../secured-vars.yml
+
+# SETUP DATABASE
+
+- name: 'Setup database, copy agiprx.sql'
+  copy:
+    src: agiprx.sql
+    dest: "{{serverdir}}/deployment/"
+    mode: 0600
+    
+- name: 'Setup database, copy adminuser.sql'
+  copy:
+    src: "../files/{{inventory_hostname}}/adminuser.sql"
+    dest: "{{serverdir}}/deployment/"
+    mode: 0600
+
+- name: "Create new database with name {{db_name}}"
+  mysql_db:
+    name: '{{db_name}}'
+    config_file: '/etc/mysql/debian.cnf'
+    state: present
+  register: dbadded
+
+- name: 'Import database'
+  mysql_db:
+    name: '{{db_name}}'
+    config_file: '/etc/mysql/debian.cnf'
+    state: import
+    target: '{{serverdir}}/deployment/agiprx.sql'
+  when: dbadded.changed
+  
+- name: 'Create admin user in DB'
+  mysql_db:
+    name: '{{db_name}}'
+    config_file: '/etc/mysql/debian.cnf'
+    state: import
+    target: '{{serverdir}}/deployment/adminuser.sql'
+  when: dbadded.changed
+  
+- name: 'Add db user and grant permissions'
+  mysql_user:
+    name: '{{db_user}}'
+    password: '{{db_password}}'
+    priv: '{{db_name}}.*:ALL'
+    config_file: '/etc/mysql/debian.cnf'
+    state: present
+
+# SETUP HAProxy
+
+- name: 'Install HAProxy'
+  apt:
+    pkg: ['haproxy']
+    state: present
+
+- name: 'Create HAProxy subdirectories'
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0775
+  with_items:
+    - "/etc/haproxy/archive"
+    - "/etc/haproxy/certs"
+    - "/etc/haproxy/errors"
+
+- name: 'Copy dummy.pem to /etc/haproxy/certs/ to satisfy haproxy with at least one certificate'
+  copy:
+    src: ../files/dummy.pem
+    dest: /etc/haproxy/certs/dummy.pem
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: 'Touch domain2backend.map'
+  copy:
+    content: ""
+    dest: /etc/haproxy/domain2backend.map
+    force: no
+    group: root
+    owner: root
+    mode: u=rw,g=r,o=r
+
+- name: 'Touch domain2cert.map'
+  copy:
+    content: ""
+    dest: /etc/haproxy/domain2cert.map
+    force: no
+    group: root
+    owner: root
+    mode: u=rw,g=r,o=r
+    
+- name: 'Touch domain2redirect.map'
+  copy:
+    content: ""
+    dest: /etc/haproxy/domain2redirect.map
+    force: no
+    group: root
+    owner: root
+    mode: u=rw,g=r,o=r
+
+- name: 'Install haproxy-header.cfg.template'
+  template:
+    src: ../files/haproxy-header.cfg.template
+    dest: '/etc/haproxy/haproxy-header.cfg'
+    mode: u=rw,g=r,o=r
+    force: no
+    # variable_start_string: '^°'
+    # variable_end_string: '°^'
+
+- name: 'Install haproxy-footer.cfg'
+  copy:
+    src: ../files/haproxy-footer.cfg
+    dest: '/etc/haproxy/haproxy-footer.cfg'
+    mode: u=rw,g=r,o=r
+    force: no
+
+- name: 'Copy HAProxy default error files'
+  copy:
+    src: "{{item}}"
+    dest: '/etc/haproxy/errors/'
+    mode: u=rw,g=r,o=r
+    force: no
+  with_items:
+    - '../files/errors/204-nocontent.http'
+    - '../files/errors/400.http'
+    - '../files/errors/403.http'
+    - '../files/errors/408.http'
+    - '../files/errors/500.http'
+    - '../files/errors/502.http'
+    - '../files/errors/503.http'
+    - '../files/errors/503-maintenance.http'
+    - '../files/errors/504.http'
+
+# AGIPRX SETUP
+
+- name: 'Setup authorized_keys for agiprx'
+  template:
+    src: '../files/{{inventory_hostname}}/agiprx_authorized_keys'
+    dest: '{{serverdir}}/.ssh/authorized_keys'
+    mode: 0600
+    owner: agiprx
+    group: agiprx
+    force: no
+
+- name: 'Copy scripts'
+  copy:
+    src: "{{item}}"
+    dest: '{{serverdir}}/scripts/'
+    mode: u=rwx,g=rx,o=r
+    owner: agiprx
+    group: agiprx
+  with_items:
+    - '../files/scripts/concat-lesslcert-for-haproxy.sh'
+    - '../files/scripts/haproxy-safe-reload.sh'
+    - '../files/scripts/sshprx.sh.sample'
+    - '../files/scripts/run-maintenance.sh.sample'
+    - '../files/scripts/sync-to-slave.sh'    
+
+- name: 'Copy {{agiprx_jar}}'
+  copy:
+    src: '../files/{{agiprx_jar}}'
+    dest: '{{serverdir}}/deployment/'
+    mode: 0600
+  register: agiprxupdate
+  notify:
+    - agiprx restart
+
+- name: 'Copy application.properties'
+  copy:
+    src: "../files/{{inventory_hostname}}/application.properties"
+    dest: "{{serverdir}}/etc/application.properties"
+    mode: u=rw,g=,o=
+  notify:
+    - agiprx restart
+    
+- name: 'Copy jul-log.properties'
+  copy:
+    src: "../files/{{inventory_hostname}}/jul-log.properties"
+    dest: "{{serverdir}}/etc/jul-log.properties"
+    mode: u=rw,g=,o=
+  notify:
+    - agiprx restart
+
+- name: 'Copy SSH proxy public key'
+  copy:
+    src: "../files/{{inventory_hostname}}/prx_rsa.pub"
+    dest: "{{serverdir}}/etc/"
+    mode: u=rw,g=r,o=r
+
+- name: 'Copy SSH proxy private key'
+  copy:
+    src: "../files/{{inventory_hostname}}/prx_rsa"
+    dest: "{{serverdir}}/etc/"
+    mode: u=rw,g=,o=
+
+- name: 'Set {{serverdir}} to agiprx.agiprx'
+  file:
+    dest: "{{serverdir}}/"
+    owner: agiprx
+    group: agiprx
+    recurse: yes
+
+- name: 'Setup systemd service'
+  template:
+    src: ../files/agiprx.service.template
+    dest: /etc/systemd/system/agiprx.service
+    mode: 0644
+  register: svcunit
+  notify:
+    - agiprx restart
+    
+- name: 'As daemon reload does not work reliably with handlers, run a forced reload by shell'
+  shell: /bin/systemctl daemon-reload
+  when: svcunit.changed
+
+- name: 'Enable agiprx (autostart on boot)'
+  systemd:
+    name: agiprx
+    state: started
+    enabled: yes
+  notify:
+    - agiprx restart
+
+# TODO: remove this ?
+#- name: 'Nightly restart of AgiPrx to assure reload of all data'
+#  cron:
+#    name: "AgiPrx restart"
+#    minute: "55"
+#    hour: "23"
+#    job: "/usr/bin/systemctl restart agiprx"
+#    user: root
+
+- name: 'Setup maintenance cronjob'
+  cron:
+    name: "AgiPrx maintenance"
+    minute: "5"
+    hour: "0"
+    job: 'MSFILE={{serverdir}}/scripts/run-maintenance.sh; if test -f "$MSFILE"; then $MSFILE; else echo "Missing file $MSFILE"; fi'
+    user: agiprx

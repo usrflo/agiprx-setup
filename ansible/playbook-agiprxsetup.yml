@@ -1,0 +1,7 @@
+# AgiPrx Server setup
+
+- hosts: agiprxsrv
+  roles:
+    - basicagiprx
+    - java11
+    - agiprxapp

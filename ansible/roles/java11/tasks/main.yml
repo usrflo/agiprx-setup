@@ -1,0 +1,4 @@
+- name: 'Copy jlink JRE for agiprx'
+  unarchive:
+    src: ../files/agiprxjre.tgz
+    dest: "{{serverdir}}/"

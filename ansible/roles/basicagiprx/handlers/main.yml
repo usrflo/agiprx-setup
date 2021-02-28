@@ -1,0 +1,4 @@
+- name: ssh reload
+  systemd:
+    state: reloaded
+    name: ssh

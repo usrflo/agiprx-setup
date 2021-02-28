@@ -1,0 +1,35 @@
+- name: 'Setup basic packages'
+  apt:
+    pkg: ['bash', 'nano', 'ssh', 'mariadb-server', 'python-pymysql', 'python3-pymysql', 'openssl', 'certbot', 'unzip', 'cron']
+    update_cache: yes
+    state: present
+
+# USER SETUP and BASIC DIRECTORY STRUCTURE
+
+- name: 'Create agiprx group'
+  group:
+    name: agiprx
+
+- name: 'Create agiprx user'
+  user:
+    name: agiprx
+    group: agiprx
+    comment: "AgiPrx login user"
+    shell: "/bin/false"
+    home: "{{serverdir}}"
+    # expires: -1
+    state: present
+
+- name: "Create {{serverdir}} with subdirectories"
+  file:
+    path: "{{item}}"
+    state: directory
+    owner: agiprx
+    group: agiprx
+    mode: 0775
+  with_items:
+    - "{{serverdir}}"
+    - "{{serverdir}}/deployment"
+    - "{{serverdir}}/etc"
+    - "{{serverdir}}/scripts"
+    - "{{serverdir}}/.ssh"
