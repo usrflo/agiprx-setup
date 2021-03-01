@@ -8,7 +8,7 @@ Some basic/external packages will be required: 'bash', 'nano', 'ssh', 'mariadb-s
 
 ## Check encryption of secured config files
 
-Some sample config with passwords/private keys are encrypted by `ansible-vault` with sample password `secSample1`.
+In production some config files should be secured/encrypted with passwords/private keys by `ansible-vault`, in this sample setup this would refer to:
 
 * ansible/secured-vars.yml.tpl
 * ansible/roles/agiprxapp/files/master.example.org/application.properties
@@ -16,9 +16,9 @@ Some sample config with passwords/private keys are encrypted by `ansible-vault` 
 * ansible/roles/agiprxapp/files/slave.example.org/application.properties
 * ansible/roles/agiprxapp/files/slave.example.org/prx_rsa
 
-Set your own password first with (or remove this password):
+Optionally set your own password first with e.g.
 
-`ansible-vault rekey ansible/secured-vars.yml ansible/roles/agiprxapp/files/master.example.org/application.properties ansible/roles/agiprxapp/files/slave.example.org/application.properties`
+`ansible-vault encrypt ansible/secured-vars.yml`
 
 Open these files in the next section via e.g.
 
