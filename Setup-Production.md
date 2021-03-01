@@ -58,34 +58,38 @@ Open these files in the next section via e.g.
 
 * edit application.properties on master instance:
 
-	...
-	### BEGIN: master instance configuration ###
-	agiprx.masterinstance=true
-	
-	# define slave instance IPs on distributed setup; a list of IPs is space separated, ip4 can be mixed with ip6
-	agiprx.slaveIpList=1.2.3.5 1.2.3.6
-	
-	# path to sync script for slave synchronization; first and only argument is the slave server ip
-	agiprx.slaveSyncCommand=/opt/agiprx/scripts/sync-to-slave.sh
-	
-	# accepted IPs in domain name validation; a list of IPs is space separated, ip4 can be mixed with ip6
-	# those IPs directly or indirectly need to refer/forward to the configured master/slave proxies;
-	domain.trustedIps=1.2.3.4 1.2.3.5 1.2.3.6 ::2
-	
-	### END: master instance configuration ###
-	...
+```
+...
+### BEGIN: master instance configuration ###
+agiprx.masterinstance=true
+
+# define slave instance IPs on distributed setup; a list of IPs is space separated, ip4 can be mixed with ip6
+agiprx.slaveIpList=1.2.3.5 1.2.3.6
+
+# path to sync script for slave synchronization; first and only argument is the slave server ip
+agiprx.slaveSyncCommand=/opt/agiprx/scripts/sync-to-slave.sh
+
+# accepted IPs in domain name validation; a list of IPs is space separated, ip4 can be mixed with ip6
+# those IPs directly or indirectly need to refer/forward to the configured master/slave proxies;
+domain.trustedIps=1.2.3.4 1.2.3.5 1.2.3.6 ::2
+
+### END: master instance configuration ###
+...
+```
 
 * edit application.properties on slave instance(s):
 
-	...
-	### BEGIN: slave instance configuration ###
-	agiprx.masterinstance=false
-	
-	# master IP v4v6
-	agiprx.masterIp=1.2.3.4
-	
-	### END: slave instance configuration ###
-	...
+```
+...
+### BEGIN: slave instance configuration ###
+agiprx.masterinstance=false
+
+# master IP v4v6
+agiprx.masterIp=1.2.3.4
+
+### END: slave instance configuration ###
+...
+```
 
 Restart 'agiprx' on all instances.
 
@@ -100,34 +104,38 @@ A master change is very similar to the initial setup:
 
 * edit application.properties on new master instance:
 
-	...
-	### BEGIN: master instance configuration ###
-	agiprx.masterinstance=true
-	
-	# define slave instance IPs on distributed setup; a list of IPs is space separated, ip4 can be mixed with ip6
-	agiprx.slaveIpList=1.2.3.4 1.2.3.6
-	
-	# path to sync script for slave synchronization; first and only argument is the slave server ip
-	agiprx.slaveSyncCommand=/opt/agiprx/scripts/sync-to-slave.sh
-	
-	# accepted IPs in domain name validation; a list of IPs is space separated, ip4 can be mixed with ip6
-	# those IPs directly or indirectly need to refer/forward to the configured master/slave proxies;
-	domain.trustedIps=1.2.3.4 1.2.3.5 1.2.3.6 ::2
-	
-	### END: master instance configuration ###
-	...
+```
+...
+### BEGIN: master instance configuration ###
+agiprx.masterinstance=true
+
+# define slave instance IPs on distributed setup; a list of IPs is space separated, ip4 can be mixed with ip6
+agiprx.slaveIpList=1.2.3.4 1.2.3.6
+
+# path to sync script for slave synchronization; first and only argument is the slave server ip
+agiprx.slaveSyncCommand=/opt/agiprx/scripts/sync-to-slave.sh
+
+# accepted IPs in domain name validation; a list of IPs is space separated, ip4 can be mixed with ip6
+# those IPs directly or indirectly need to refer/forward to the configured master/slave proxies;
+domain.trustedIps=1.2.3.4 1.2.3.5 1.2.3.6 ::2
+
+### END: master instance configuration ###
+...
+```
 
 * edit application.properties on old master and slave instance(s):
 
-	...
-	### BEGIN: slave instance configuration ###
-	agiprx.masterinstance=false
-	
-	# master IP v4v6
-	agiprx.masterIp=1.2.3.5
-	
-	### END: slave instance configuration ###
-	...
+```
+...
+### BEGIN: slave instance configuration ###
+agiprx.masterinstance=false
+
+# master IP v4v6
+agiprx.masterIp=1.2.3.5
+
+### END: slave instance configuration ###
+...
+```
 
 * restart 'agiprx' on all instances; the new master-ip is written to haproxy-letsencrypt-configs on all slave servers
 

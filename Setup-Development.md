@@ -2,35 +2,25 @@
 
 ## Setup LXD environment via snap
 
-`apt install snapd`
-
-`snap install lxd`
-
-`bash; lxd init`
+	apt install snapd
+	snap install lxd
+	bash; lxd init
 
 Follow setup dialog.
 
 ## Launch test container as LXC container
 
-`lxc launch images:debian/buster agiprxtest`
-
-`lxc bash agiprxtest`
-
-`$ apt-get install ssh python3 gpg`
-
-`$ mkdir /root/.ssh`
-
-`$ chmod 700 /root/.ssh`
-
-`$ exit`
-
-`lxc file push .ssh/id_rsa.pub agiprxtest/root/.ssh/authorized_keys`
-
-`lxc bash agiprxtest`
-
-`$ chown -R root.root /root/.ssh`
-
-`lxc ls` --> add IP to /etc/hosts
+	lxc launch images:debian/buster agiprxtest
+	lxc bash agiprxtest
+	$ apt-get install ssh python3 gpg
+	$ mkdir /root/.ssh
+	$ chmod 700 /root/.ssh
+	$ exit
+	lxc file push .ssh/id_rsa.pub agiprxtest/root/.ssh/authorized_keys
+	lxc bash agiprxtest
+	$ chown -R root.root /root/.ssh
+	lxc ls
+	# --> add IP to /etc/hosts
 
 ## Setup and deploy AgiPrx in test container
 
