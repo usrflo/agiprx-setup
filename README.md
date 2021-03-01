@@ -1,4 +1,4 @@
-# Setup Instructions for AgiPrx - HAProxy configuration CLI UI and SSH Proxy config tool
+# Setup Instructions for AgiPrx - HAProxy configuration CLI and SSH Proxy config tool
 
 See [Setup-Production.md](Setup-Production.md) for instructions on the configuration and execution of the ansible setup of AgiPrx.
 
