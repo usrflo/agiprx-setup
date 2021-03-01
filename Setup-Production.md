@@ -24,7 +24,7 @@ Open these files in the next section via e.g.
 
 `export EDITOR=nano; ansible-vault edit ansible/secured-vars.yml`
 
-## Configure new AgiPrx proxy by ansible
+## Configure and deploy the AgiPrx proxy tool by ansible
 
 1. clone this project; the last JAR build/release of agiprx is included (no need to build the project from source code)
    `git clone https://github.com/usrflo/agiprx-setup.git`
