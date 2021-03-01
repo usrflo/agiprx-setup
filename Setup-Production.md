@@ -26,6 +26,8 @@ Open these files in the next section via e.g.
 
 ## Configure new AgiPrx proxy by ansible
 
+1. clone this project; the last JAR build/release of agiprx is included (no need to build the project from source code)
+   `git clone https://github.com/usrflo/agiprx-setup.git`
 1. create your **ansible/hosts** inventory file from **ansible/hosts.tpl**
 1. create your **ansible/secured-vars.yml** from **ansible/secured-vars.yml.tpl**
 1. add your hostname(s) to inventory file **ansible/hosts** with basic configuration
