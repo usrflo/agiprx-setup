@@ -1,6 +1,6 @@
 - name: 'Setup basic packages'
   apt:
-    pkg: ['bash', 'nano', 'ssh', 'mariadb-server', 'python-pymysql', 'python3-pymysql', 'openssl', 'certbot', 'unzip', 'cron']
+    pkg: ['bash', 'nano', 'ssh', 'mariadb-server', 'python*-pymysql', 'openssl', 'certbot', 'unzip', 'cron']
     update_cache: yes
     state: present
 

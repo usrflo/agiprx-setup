@@ -4,7 +4,7 @@
 
 The following deployment is based on [ansible](https://docs.ansible.com/ansible/latest/) with focus on Debian/Ubuntu.
 
-Some basic/external packages will be required: 'bash', 'nano', 'ssh', 'mariadb-server', 'python-pymysql', 'python3-pymysql', 'openssl', 'certbot', 'unzip', 'cron'.
+Some basic/external packages will be required: 'bash', 'nano', 'ssh', 'mariadb-server', 'python*-pymysql', 'openssl', 'certbot', 'unzip', 'cron'.
 
 ## Check encryption of secured config files
 
