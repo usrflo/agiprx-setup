@@ -100,6 +100,15 @@
     group: root
     owner: root
     mode: u=rw,g=r,o=r
+    
+- name: 'Touch domain2prefix.map'
+  copy:
+    content: ""
+    dest: /etc/haproxy/domain2prefix.map
+    force: no
+    group: root
+    owner: root
+    mode: u=rw,g=r,o=r
 
 - name: 'Install haproxy-header.cfg.template'
   template:
@@ -114,6 +123,13 @@
   copy:
     src: ../files/haproxy-footer.cfg
     dest: '/etc/haproxy/haproxy-footer.cfg'
+    mode: u=rw,g=r,o=r
+    force: no
+
+- name: 'Install blocked.ips'
+  copy:
+    src: ../files/blocked.ips
+    dest: '/etc/haproxy/blocked.ips'
     mode: u=rw,g=r,o=r
     force: no
 
