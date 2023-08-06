@@ -22,4 +22,4 @@ db_user=agiprx
 jdkdebugoptions=
 
 # AgiPrx JAR/release
-agiprx_jar=agiprx-2.0.jar
+agiprx_jar=agiprx-2.1.jar
