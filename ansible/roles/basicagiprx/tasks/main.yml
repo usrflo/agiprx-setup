@@ -3,6 +3,13 @@
     pkg: ['bash', 'nano', 'ssh', 'mariadb-server', 'python*-pymysql', 'openssl', 'certbot', 'unzip', 'cron']
     update_cache: yes
     state: present
+    
+# Disable certbot.timer; AgiPrx schedules certbot renewals
+- name: 'disable certbot.timer'
+  systemd:
+    name: certbot.timer
+    state: stopped
+    enabled: no
 
 # USER SETUP and BASIC DIRECTORY STRUCTURE
 
